@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, height=720">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; }
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['"Noto Sans JP"', 'sans-serif'] },
+      colors: {
+        primary: '#1B73E8', 'primary-dark': '#1557B0',
+        secondary: '#34A853', accent: '#FF6D2E',
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="font-sans">
+<!-- スライド: テキストコンテンツ -->
+<div class="w-[1280px] h-[720px] bg-white p-[48px_60px] flex flex-col relative overflow-hidden"
+     data-speaker-notes="{{SPEAKER_NOTES}}">
+  <!-- ページ番号 -->
+  <div class="absolute bottom-4 right-8 text-[0.75rem] text-[#94A3B8]">{{PAGE_NUMBER}}</div>
+
+  <!-- ヘッダー -->
+  <div class="mb-8">
+    <div class="w-10 h-1 bg-primary mb-4 rounded-full"></div>
+    <h2 class="text-[1.75rem] font-bold text-[#1E293B]">{{HEADING}}</h2>
+  </div>
+
+  <!-- 本文エリア -->
+  <div class="flex-1 flex gap-[24px]">
+    <div class="flex-1">
+      <ul class="space-y-4 text-[1.125rem] text-[#334155]">
+        <li class="flex items-start gap-3">
+          <span class="w-2 h-2 bg-primary rounded-full mt-2.5 shrink-0"></span>
+          <span>{{BULLET_1}}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="w-2 h-2 bg-primary rounded-full mt-2.5 shrink-0"></span>
+          <span>{{BULLET_2}}</span>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="w-2 h-2 bg-primary rounded-full mt-2.5 shrink-0"></span>
+          <span>{{BULLET_3}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>

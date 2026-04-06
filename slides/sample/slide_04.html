@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, height=720">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; }
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['"Noto Sans JP"', 'sans-serif'] },
+      colors: {
+        primary: '#1B73E8', 'primary-dark': '#1557B0',
+        secondary: '#34A853', accent: '#FF6D2E',
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="font-sans">
+<div class="w-[1280px] h-[720px] bg-white p-[48px_60px] flex flex-col relative overflow-hidden"
+     data-speaker-notes="チャネル別の売上実績。Webが最も伸びており、パートナー経由も堅調。">
+  <div class="absolute bottom-4 right-8 text-[0.75rem] text-[#94A3B8]">4</div>
+  <div class="mb-8">
+    <div class="w-10 h-1 bg-primary mb-4 rounded-full"></div>
+    <h2 class="text-[1.75rem] font-bold text-[#1E293B]">チャネル別売上実績</h2>
+  </div>
+  <div class="flex-1 flex items-end gap-2 px-4 pb-2">
+    <div class="flex flex-col justify-between h-[420px] text-[0.75rem] text-[#94A3B8] pr-4 pb-8">
+      <span>500万</span>
+      <span>375万</span>
+      <span>250万</span>
+      <span>125万</span>
+      <span>0</span>
+    </div>
+    <div class="flex-1 flex items-end justify-around gap-8 border-b border-l border-[#E2E8F0] h-[420px] pl-2 pb-2">
+      <div class="flex flex-col items-center gap-2">
+        <span class="text-[0.875rem] font-bold text-[#1E293B]">¥4.8M</span>
+        <div class="w-20 bg-primary rounded-t-lg" style="height: 336px"></div>
+        <span class="text-[0.875rem] text-[#64748B] mt-1">Web</span>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <span class="text-[0.875rem] font-bold text-[#1E293B]">¥3.2M</span>
+        <div class="w-20 bg-secondary rounded-t-lg" style="height: 224px"></div>
+        <span class="text-[0.875rem] text-[#64748B] mt-1">パートナー</span>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <span class="text-[0.875rem] font-bold text-[#1E293B]">¥2.5M</span>
+        <div class="w-20 bg-accent rounded-t-lg" style="height: 176px"></div>
+        <span class="text-[0.875rem] text-[#64748B] mt-1">直販</span>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <span class="text-[0.875rem] font-bold text-[#1E293B]">¥2.0M</span>
+        <div class="w-20 bg-[#F59E0B] rounded-t-lg" style="height: 140px"></div>
+        <span class="text-[0.875rem] text-[#64748B] mt-1">その他</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

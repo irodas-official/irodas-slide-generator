@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{DECK_TITLE}} — スライドビューア</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: #0F172A;
+    color: #E2E8F0;
+    min-height: 100vh;
+  }
+
+  /* ヘッダー */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 32px;
+    background: #1E293B;
+    border-bottom: 1px solid #334155;
+  }
+  .header h1 { font-size: 1.125rem; font-weight: 700; }
+  .header .info { font-size: 0.875rem; color: #94A3B8; }
+  .header .actions { display: flex; gap: 8px; }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: #1B73E8; color: #fff; }
+  .btn-primary:hover { background: #1557B0; }
+  .btn-secondary { background: #334155; color: #E2E8F0; }
+  .btn-secondary:hover { background: #475569; }
+
+  /* スライド一覧 */
+  .slides-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .slide-wrapper {
+    background: #1E293B;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #334155;
+  }
+  .slide-label {
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    color: #94A3B8;
+    background: #1E293B;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .slide-frame-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+    overflow: hidden;
+  }
+  .slide-frame-container iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 1280px;
+    height: 720px;
+    border: none;
+    transform-origin: top left;
+    pointer-events: none;
+  }
+
+  /* ===== プレゼンモード ===== */
+  .presentation-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+  }
+  .presentation-overlay.active { display: block; }
+
+  .presentation-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1280px;
+    height: 720px;
+    transform-origin: center center;
+  }
+  .presentation-stage iframe {
+    width: 1280px;
+    height: 720px;
+    border: none;
+    pointer-events: none;
+  }
+
+  .presentation-overlay .nav-area {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 25%;
+    cursor: pointer;
+    z-index: 10;
+  }
+  .presentation-overlay .nav-prev { left: 0; }
+  .presentation-overlay .nav-next { right: 0; }
+  .presentation-overlay .slide-counter {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 4px 16px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .presentation-overlay:hover .slide-counter { opacity: 1; }
+  .presentation-overlay .exit-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .presentation-overlay:hover .exit-btn { opacity: 1; }
+
+  /* ===== 発表者ビュー ===== */
+  .presenter-view {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #0F172A;
+    z-index: 9998;
+    padding: 16px;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr;
+    gap: 16px;
+  }
+  .presenter-view.active { display: grid; }
+
+  .presenter-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+  }
+  .presenter-current-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+  }
+  .presenter-current {
+    width: 100%;
+    background: #1E293B;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    padding-top: 56.25%;
+  }
+  .presenter-current iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 1280px;
+    height: 720px;
+    border: none;
+    transform-origin: top left;
+    pointer-events: none;
+  }
+  .presenter-nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .presenter-nav .btn { min-width: 100px; text-align: center; }
+
+  .presenter-side {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+  }
+  .presenter-next {
+    background: #1E293B;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+  }
+  .presenter-next-label {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    color: #94A3B8;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .presenter-next-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    overflow: hidden;
+  }
+  .presenter-next-frame iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 1280px;
+    height: 720px;
+    border: none;
+    transform-origin: top left;
+    pointer-events: none;
+  }
+  .presenter-info {
+    background: #1E293B;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+    min-height: 0;
+  }
+  .presenter-timer {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1B73E8;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .presenter-slide-num {
+    text-align: center;
+    font-size: 0.875rem;
+    color: #94A3B8;
+    flex-shrink: 0;
+  }
+  .presenter-notes-label {
+    font-size: 0.75rem;
+    color: #64748B;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .presenter-notes {
+    flex: 1;
+    background: #0F172A;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #CBD5E1;
+    overflow-y: auto;
+    min-height: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>{{DECK_TITLE}}</h1>
+    <p class="info" id="slideCount"></p>
+  </div>
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="openPresenterView()">発表者ビュー</button>
+    <button class="btn btn-primary" onclick="startPresentation()">プレゼンテーション</button>
+  </div>
+</div>
+
+<div class="slides-grid" id="slidesGrid"></div>
+
+<!-- プレゼンモード -->
+<div class="presentation-overlay" id="presentationOverlay">
+  <div class="nav-area nav-prev" onclick="prevSlide()"></div>
+  <div class="nav-area nav-next" onclick="nextSlide()"></div>
+  <div class="presentation-stage" id="presentationStage">
+    <iframe id="presentationFrame"></iframe>
+  </div>
+  <div class="slide-counter" id="slideCounter"></div>
+  <button class="exit-btn" onclick="exitPresentation()">✕</button>
+</div>
+
+<!-- 発表者ビュー -->
+<div class="presenter-view" id="presenterView">
+  <div class="presenter-main">
+    <div class="presenter-current-wrapper">
+      <div class="presenter-current" id="presenterCurrentContainer">
+        <iframe id="presenterCurrentFrame"></iframe>
+      </div>
+    </div>
+    <div class="presenter-nav">
+      <button class="btn btn-secondary" onclick="prevSlide()">◀ 前へ</button>
+      <div class="presenter-slide-num" id="presenterSlideNum"></div>
+      <button class="btn btn-secondary" onclick="nextSlide()">次へ ▶</button>
+      <button class="btn btn-secondary" onclick="exitPresentation()">終了</button>
+    </div>
+  </div>
+  <div class="presenter-side">
+    <div class="presenter-next">
+      <div class="presenter-next-label">NEXT SLIDE</div>
+      <div class="presenter-next-frame" id="presenterNextContainer">
+        <iframe id="presenterNextFrame"></iframe>
+      </div>
+    </div>
+    <div class="presenter-info">
+      <div class="presenter-timer" id="presenterTimer">00:00:00</div>
+      <div class="presenter-notes-label">スピーカーノート</div>
+      <div class="presenter-notes" id="presenterNotes">ノートはありません</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== スライド定義 =====
+const slides = [
+  {{SLIDES_JSON}}
+];
+
+let currentSlide = 0;
+let timerInterval = null;
+let startTime = null;
+let presenterMode = false;
+
+// iframeのフォーカスを奪い返す
+function preventIframeFocus() {
+  document.querySelectorAll('iframe').forEach(iframe => {
+    iframe.addEventListener('load', () => {
+      try { iframe.contentWindow.document.addEventListener('keydown', handleKey); } catch(e) {}
+    });
+  });
+  // 定期的にフォーカスを取り戻す
+  setInterval(() => {
+    if (document.getElementById('presentationOverlay').classList.contains('active') ||
+        document.getElementById('presenterView').classList.contains('active')) {
+      window.focus();
+    }
+  }, 300);
+}
+
+// 一覧表示を構築
+function buildGrid() {
+  const grid = document.getElementById('slidesGrid');
+  document.getElementById('slideCount').textContent = `${slides.length} スライド`;
+
+  slides.forEach((slide, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'slide-wrapper';
+    wrapper.innerHTML = `
+      <div class="slide-label">
+        <span>スライド ${i + 1} / ${slides.length}</span>
+        <span>${slide.file}</span>
+      </div>
+      <div class="slide-frame-container" id="container-${i}">
+        <iframe src="${slide.file}" id="frame-${i}"></iframe>
+      </div>
+    `;
+    grid.appendChild(wrapper);
+  });
+
+  requestAnimationFrame(() => {
+    slides.forEach((_, i) => scaleIframe(`container-${i}`, `frame-${i}`));
+  });
+  window.addEventListener('resize', () => {
+    slides.forEach((_, i) => scaleIframe(`container-${i}`, `frame-${i}`));
+    if (document.getElementById('presentationOverlay').classList.contains('active')) scalePresentationFrame();
+    if (presenterMode) scalePresenterFrames();
+  });
+}
+
+function scaleIframe(containerId, frameId) {
+  const container = document.getElementById(containerId);
+  const frame = document.getElementById(frameId);
+  if (!container || !frame) return;
+  const scale = container.offsetWidth / 1280;
+  frame.style.transform = `scale(${scale})`;
+}
+
+// プレゼンモードのスケーリング
+function scalePresentationFrame() {
+  const stage = document.getElementById('presentationStage');
+  if (!stage) return;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const scale = Math.min(vw / 1280, vh / 720);
+  stage.style.transform = `translate(-50%, -50%) scale(${scale})`;
+}
+
+// プレゼンモード
+function startPresentation() {
+  currentSlide = 0;
+  presenterMode = false;
+  document.getElementById('presentationOverlay').classList.add('active');
+  scalePresentationFrame();
+  updateSlideContent();
+  document.addEventListener('keydown', handleKey);
+  document.body.style.overflow = 'hidden';
+  window.focus();
+}
+
+function exitPresentation() {
+  document.getElementById('presentationOverlay').classList.remove('active');
+  document.getElementById('presenterView').classList.remove('active');
+  document.removeEventListener('keydown', handleKey);
+  document.body.style.overflow = '';
+  presenterMode = false;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
+
+// 発表者ビュー
+function openPresenterView() {
+  currentSlide = 0;
+  presenterMode = true;
+  document.getElementById('presenterView').classList.add('active');
+  startTime = Date.now();
+  timerInterval = setInterval(updateTimer, 1000);
+  updateSlideContent();
+  document.addEventListener('keydown', handleKey);
+  document.body.style.overflow = 'hidden';
+
+  requestAnimationFrame(scalePresenterFrames);
+  window.focus();
+}
+
+function scalePresenterFrames() {
+  // 現在のスライド
+  const currentContainer = document.getElementById('presenterCurrentContainer');
+  const currentFrame = document.getElementById('presenterCurrentFrame');
+  if (currentContainer && currentFrame) {
+    const scale = currentContainer.offsetWidth / 1280;
+    currentFrame.style.transform = `scale(${scale})`;
+  }
+
+  // 次のスライド
+  const nextContainer = document.getElementById('presenterNextContainer');
+  const nextFrame = document.getElementById('presenterNextFrame');
+  if (nextContainer && nextFrame) {
+    const scale = nextContainer.offsetWidth / 1280;
+    nextFrame.style.transform = `scale(${scale})`;
+  }
+}
+
+function updateSlideContent() {
+  const slide = slides[currentSlide];
+
+  // プレゼンテーションフレーム
+  document.getElementById('presentationFrame').src = slide.file;
+  document.getElementById('slideCounter').textContent = `${currentSlide + 1} / ${slides.length}`;
+
+  if (presenterMode) {
+    document.getElementById('presenterCurrentFrame').src = slide.file;
+    document.getElementById('presenterSlideNum').textContent =
+      `${currentSlide + 1} / ${slides.length}`;
+    document.getElementById('presenterNotes').textContent =
+      slide.notes || 'ノートはありません';
+
+    const nextFrame = document.getElementById('presenterNextFrame');
+    nextFrame.src = (currentSlide + 1 < slides.length) ? slides[currentSlide + 1].file : '';
+
+    requestAnimationFrame(scalePresenterFrames);
+  }
+}
+
+function nextSlide() {
+  if (currentSlide < slides.length - 1) { currentSlide++; updateSlideContent(); }
+}
+function prevSlide() {
+  if (currentSlide > 0) { currentSlide--; updateSlideContent(); }
+}
+
+function handleKey(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); nextSlide(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'Backspace') { e.preventDefault(); e.stopPropagation(); prevSlide(); }
+  else if (e.key === 'Escape') { exitPresentation(); }
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+  const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+  const s = String(elapsed % 60).padStart(2, '0');
+  document.getElementById('presenterTimer').textContent = `${h}:${m}:${s}`;
+}
+
+// 初期化
+buildGrid();
+preventIframeFocus();
+</script>
+</body>
+</html>

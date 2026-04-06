@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, height=720">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; }
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['"Noto Sans JP"', 'sans-serif'] },
+      colors: {
+        primary: '#1B73E8', 'primary-dark': '#1557B0',
+        secondary: '#34A853', accent: '#FF6D2E',
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="font-sans">
+<!-- スライド: カバー -->
+<div class="w-[1280px] h-[720px] bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center relative overflow-hidden"
+     data-speaker-notes="オープニング。タイトルと発表者を紹介する。">
+  <!-- 装飾 -->
+  <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4"></div>
+  <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4"></div>
+
+  <div class="text-center z-10 px-[60px]">
+    <p class="text-white/70 text-[1.125rem] tracking-widest uppercase mb-6">{{CATEGORY}}</p>
+    <h1 class="text-white text-[3rem] font-bold leading-tight mb-8">{{TITLE}}</h1>
+    <p class="text-white/80 text-[1.25rem] mb-2">{{SUBTITLE}}</p>
+    <div class="mt-12 flex items-center justify-center gap-4">
+      <div class="w-12 h-[1px] bg-white/40"></div>
+      <p class="text-white/60 text-[1rem]">{{DATE}} / {{PRESENTER}}</p>
+      <div class="w-12 h-[1px] bg-white/40"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

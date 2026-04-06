@@ -1,0 +1,43 @@
+{
+  "name": "irodas",
+  "description": "irodas コーポレートテーマ",
+  "colors": {
+    "primary": "#1B73E8",
+    "primaryDark": "#1557B0",
+    "secondary": "#34A853",
+    "accent": "#FF6D2E",
+    "background": "#FFFFFF",
+    "backgroundAlt": "#F8FAFC",
+    "surface": "#FFFFFF",
+    "text": "#1E293B",
+    "textLight": "#64748B",
+    "textOnPrimary": "#FFFFFF",
+    "border": "#E2E8F0",
+    "success": "#22C55E",
+    "warning": "#F59E0B",
+    "danger": "#EF4444",
+    "chart": ["#1B73E8", "#34A853", "#FF6D2E", "#F59E0B", "#8B5CF6", "#EC4899"]
+  },
+  "fonts": {
+    "heading": "'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif",
+    "body": "'Noto Sans JP', 'Helvetica Neue', Arial, sans-serif",
+    "mono": "'JetBrains Mono', 'Fira Code', monospace"
+  },
+  "spacing": {
+    "slideWidth": 1280,
+    "slideHeight": 720,
+    "paddingX": 60,
+    "paddingY": 48,
+    "gap": 24
+  },
+  "fontSizes": {
+    "title": "2.5rem",
+    "subtitle": "1.5rem",
+    "heading": "1.75rem",
+    "body": "1.125rem",
+    "small": "0.875rem",
+    "caption": "0.75rem"
+  },
+  "borderRadius": "12px",
+  "shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
+}

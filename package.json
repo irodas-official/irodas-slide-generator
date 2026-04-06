@@ -1,0 +1,28 @@
+{
+  "name": "irodas-slide-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "generate": "node scripts/new-slide.js",
+    "validate": "node scripts/validate.js",
+    "export-pdf": "node scripts/export-pdf.js",
+    "image": "node scripts/generate-image.js",
+    "dev": "node scripts/preview.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@google/genai": "^1.48.0",
+    "dotenv": "^17.4.1",
+    "pdf-lib": "^1.17.1",
+    "puppeteer": "^24.40.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "puppeteer"
+    ]
+  }
+}

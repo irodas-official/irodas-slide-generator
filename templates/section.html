@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, height=720">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1280px; height: 720px; overflow: hidden; }
+</style>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['"Noto Sans JP"', 'sans-serif'] },
+      colors: {
+        primary: '#1B73E8', 'primary-dark': '#1557B0',
+        secondary: '#34A853', accent: '#FF6D2E',
+      }
+    }
+  }
+}
+</script>
+</head>
+<body class="font-sans">
+<!-- スライド: 中扉（セクション区切り） -->
+<div class="w-[1280px] h-[720px] bg-white flex items-center relative overflow-hidden"
+     data-speaker-notes="セクション{{SECTION_NUMBER}}の導入。">
+  <!-- 左サイドバー -->
+  <div class="w-2 h-full bg-primary absolute left-0 top-0"></div>
+  <!-- アクセント装飾 -->
+  <div class="absolute right-0 top-0 w-[400px] h-full bg-gradient-to-l from-primary/5 to-transparent"></div>
+
+  <div class="pl-[100px] pr-[60px] z-10">
+    <p class="text-primary text-[1rem] font-bold tracking-widest uppercase mb-4">SECTION {{SECTION_NUMBER}}</p>
+    <h2 class="text-[#1E293B] text-[2.5rem] font-bold leading-tight mb-6">{{SECTION_TITLE}}</h2>
+    <p class="text-[#64748B] text-[1.125rem] max-w-[700px]">{{SECTION_DESCRIPTION}}</p>
+  </div>
+</div>
+</body>
+</html>
